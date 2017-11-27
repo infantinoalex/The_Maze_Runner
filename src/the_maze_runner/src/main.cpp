@@ -6,6 +6,7 @@
  ****/
 
 #include "ros/ros.h"
+#include "../include/the_maze_runner/driver.hpp"
 
 int main(int argc, char ** argv)
 {
@@ -16,12 +17,15 @@ int main(int argc, char ** argv)
     ros::Rate loop_rate(10);
 
     // Custom instantiations
+    Driver driver = Driver(&nh);
     
 
     // Main ROS driver
     while(ros::ok())
     {
         ros::spinOnce();
+
+        driver.DriveRobot();
 
         loop_rate.sleep();
     }

@@ -5,13 +5,13 @@ floorplan
 ( 
   name "easy_maze"
   bitmap "easy_maze.png"
-  size [35.000 25.000 1.000]
+  size [55.000 30.000 1.000]
 )
 
 window
 ( 
-  size [ 700 551 ] 
+  size [ 821 551 ] 
   scale 13.310 
 )
 
-robot( pose [ -16.064 2.213 0.000 0.000 ] )
+robot( pose [ -25.155 1.762 0.000 0.000 ] )
