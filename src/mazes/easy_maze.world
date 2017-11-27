@@ -1,0 +1,17 @@
+
+include "common.inc"
+
+floorplan
+( 
+  name "easy_maze"
+  bitmap "easy_maze.png"
+  size [35.000 25.000 1.000]
+)
+
+window
+( 
+  size [ 700 551 ] 
+  scale 13.310 
+)
+
+robot( pose [ -16.064 2.213 0.000 0.000 ] )
