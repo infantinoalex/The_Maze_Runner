@@ -1,3 +1,6 @@
 include/
 build/
 devel/
+gmapping/
+openslam_gmapping/
+slam_gmapping/

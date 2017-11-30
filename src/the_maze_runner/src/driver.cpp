@@ -4,8 +4,8 @@
 Driver::Driver(ros::NodeHandle *nh)
 {
     this->_nodeHandle = *nh;
-    this->_laserSubscriber = this->_nodeHandle.subscribe("/base_scan", 1, &Driver::LaserScanCallback, this);
-    this->_movementPublisher = this->_nodeHandle.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+    this->_laserSubscriber = this->_nodeHandle.subscribe("/robot/base_scan", 1, &Driver::LaserScanCallback, this);
+    this->_movementPublisher = this->_nodeHandle.advertise<geometry_msgs::Twist>("/robot/cmd_vel", 1);
     
     this->numberOfLasers = 0;
     this->mazeSolved = false;
@@ -30,27 +30,27 @@ void Driver::RightWallFollow()
 {
     if (this->rightMostSensor < .5)
     {
-        this->movementMsg.angular.z = 2;
+        this->movementMsg.angular.z = .5;
         this->movementMsg.linear.x = 0;
     }
     else if (this->rightMostSensor >= this->laserLimit && this->middleSensor >= this->laserLimit)
     {
-        this->movementMsg.angular.z = -2;
-        this->movementMsg.linear.x = 1;
+        this->movementMsg.angular.z = -.5;
+        this->movementMsg.linear.x = 0.5;
     }
     else if (this->rightMostSensor >= this->laserLimit && this->middleSensor < this->laserLimit)
     {
-        this->movementMsg.angular.z = 5;
+        this->movementMsg.angular.z = .5;
         this->movementMsg.linear.x = 0;
     }
     else if (this->rightMostSensor < this->laserLimit && this->middleSensor >= this->laserLimit)
     {
         this->movementMsg.angular.z = 0;
-        this->movementMsg.linear.x = 1;
+        this->movementMsg.linear.x = 0.5;
     } 
     else
     {
-        this->movementMsg.angular.z = 5;
+        this->movementMsg.angular.z = .5;
         this->movementMsg.linear.x = 0;
     }
 }

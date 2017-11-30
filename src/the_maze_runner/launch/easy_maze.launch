@@ -1,0 +1,19 @@
+<launch>
+
+    <node name="maze_runner" pkg="the_maze_runner" type="maze_runner"/>
+    
+    <node name="stage" pkg="stage_ros" type="stageros" required="true" ns="robot"
+        args="$(find the_maze_runner)/mazes/easy_maze.world" />
+
+    <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" required="false"
+        args="scan:=robot/base_scan
+              _odom_frame:=odom
+              _base_frame:=map
+              _map_update_interval:=3.0
+              _maxUrange:=5.0
+              _maxRange:=5.0
+              _particles=100.0
+              _angularUpdate=0.05
+              _linearUpdate=0.1" />
+
+</launch>

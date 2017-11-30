@@ -11,7 +11,7 @@ floorplan
 window
 ( 
   size [ 821 551 ] 
-  scale 13.310 
+  scale 10.000 
 )
 
-robot( pose [ -25.155 1.762 0.000 0.000 ] )
+robot( pose [ -23.981 -0.938 0.000 0.000 ] )

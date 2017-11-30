@@ -11,7 +11,7 @@
 int main(int argc, char ** argv)
 {
     // ROS instantiations
-    ros::init(argc, argv, "maze_runner");
+    ros::init(argc, argv, "maze_runner_node");
     ros::NodeHandle nh;
 
     ros::Rate loop_rate(10);
