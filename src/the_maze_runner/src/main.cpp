@@ -7,6 +7,7 @@
 
 #include "ros/ros.h"
 #include "../include/the_maze_runner/driver.hpp"
+#include "../include/the_maze_runner/map.hpp"
 
 int main(int argc, char ** argv)
 {
@@ -17,16 +18,18 @@ int main(int argc, char ** argv)
     ros::Rate loop_rate(10);
 
     // Custom instantiations
+    MazeMap map(&nh);
     Driver driver = Driver(&nh);
-    
 
     // Main ROS driver
     while(ros::ok())
     {
         ros::spinOnce();
 
-        driver.DriveRobot();
+        map.UpdateMapWithRobotPosition();
 
+        driver.DriveRobot(map.GetNextAngularMovement(), map.GetNextLinearMovement());
+        
         loop_rate.sleep();
     }
 }

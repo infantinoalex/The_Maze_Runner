@@ -12,7 +12,7 @@ Driver::Driver(ros::NodeHandle *nh)
     this->laserLimit = 1.5;
 }
 
-void Driver::DriveRobot()
+void Driver::DriveRobot(double newAngular, double newLinear)
 {
     if (!this->mazeSolved)
     {
@@ -20,7 +20,8 @@ void Driver::DriveRobot()
     }
     else
     {
-        this->FollowPath();
+        this->movementMsg.angular.z = newAngular;
+        this->movementMsg.linear.x = newLinear;
     }
 
     this->_movementPublisher.publish(this->movementMsg);

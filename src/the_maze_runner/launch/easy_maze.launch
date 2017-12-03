@@ -13,6 +13,7 @@
               _maxUrange:=5.0
               _maxRange:=5.0
               _particles=100.0
+              _stt=0.9
               _angularUpdate=0.05
               _linearUpdate=0.1" />
 
