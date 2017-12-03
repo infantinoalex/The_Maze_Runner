@@ -14,57 +14,87 @@ MazeMap::MazeMap(ros::NodeHandle* nh)
     }
 
     this->uninitialized = true;
+    this->initializeCount = 0;
+    this->mapComplete = false;
 }
 
 void MazeMap::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
-    this->slamMap = *msg;
-
-    if (this->uninitialized)
+    if (this->initializeCount < 2)
     {
-        this->x_start = (int)this->slamMap.info.origin.position.x;
-        this->y_start = (int)this->slamMap.info.origin.position.y;
-
-        this->uninitialized = false;
+        this->initializeCount++;
     }
+
+    this->slamMap = *msg;
 }
 
 void MazeMap::UpdateMapWithRobotPosition()
 {
+    if (this->initializeCount < 1)
+    {
+        return;
+    }
+
     try
     {
         this-> _tfListener.lookupTransform("/map", "/base_link", ros::Time(0), this->transform);
     }
     catch (tf::TransformException &ex)
     {
+        ROS_INFO("Transform Exception caught. Not calculated robots position in map.");
         return;
     }
 
-    int x = this->transform.getOrigin().x() * 10;
-    int y = this->transform.getOrigin().y() * 10;
+    int x = 
+        (this->transform.getOrigin().x() - this->slamMap.info.origin.position.x) / this->slamMap.info.resolution;
+    
+    int y = 
+        (this->transform.getOrigin().y() - this->slamMap.info.origin.position.y) / this->slamMap.info.resolution;
 
-    std::cout << "X: " << x << "\tY: " << y << std::endl;
+    if (this->uninitialized)
+    {
+
+        this->x_start = x;
+        this->y_start = y;
+        
+        this->uninitialized = false;
+    }
 
     for (int i = 9; i > 0; --i)
     {
         this->previousTenRobotLocations[i] = this->previousTenRobotLocations[i - 1];
     }
 
-    std::cout << "Created Vectors" << std::endl;
-
     std::vector<int> newPoint;
     newPoint.push_back(y);
     newPoint.push_back(x);
     this->previousTenRobotLocations[0] = newPoint;
-
-    std::cout << "Attempting to change slam map" << std::endl;
 
     for (int i = 0; i < 10; ++i)
     {
         int foundX = this->previousTenRobotLocations[i][0];
         int foundY = this->previousTenRobotLocations[i][1];
 
-        std::cout << "adding to positon " << foundX + foundY << std::endl;
+        this->slamMap.data[foundX * this->slamMap.info.width + foundY] = -127;
+    }
+
+    for (int i = -5; i < 5; ++i)
+    {
+        this->slamMap.data[(this->x_start) * this->slamMap.info.width + (this->y_start + i)] = -50;
+        this->slamMap.data[(this->x_start + i) * this->slamMap.info.width + (this->y_start - i)] = -50;
+        this->slamMap.data[(this->x_start + i) * this->slamMap.info.width + (this->y_start)] = -50;
+        this->slamMap.data[(this->x_start + i) * this->slamMap.info.width + (this->y_start + i)] = -50;
+    }
+
+    if (this->mapComplete)
+    {
+        for (int i = -5; i < 5; ++i)
+        {
+            this->slamMap.data[(this->x_end) * this->slamMap.info.width + (this->y_end + i)] = -50;
+            this->slamMap.data[(this->x_end + i) * this->slamMap.info.width + (this->y_end - i)] = -50;
+            this->slamMap.data[(this->x_end + i) * this->slamMap.info.width + (this->y_end)] = -50;
+            this->slamMap.data[(this->x_end + i) * this->slamMap.info.width + (this->y_end + i)] = -50;
+        }
     }
 
     this->_mapPublisher.publish(this->slamMap);
