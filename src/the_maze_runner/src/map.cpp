@@ -90,4 +90,4 @@ void MazeMap::UpdateMapWithRobotPosition()
     }
     
     this->_mapPublisher.publish(this->slamMap);
-}
+

@@ -3,6 +3,8 @@
 
 Driver::Driver(ros::NodeHandle* nh)
 {
+    ROS_INFO("Initialized Driver");
+
     this->_laserSubscriber = nh->subscribe("/robot/base_scan", 1, &Driver::LaserScanCallback, this);
     this->_movementPublisher = nh->advertise<geometry_msgs::Twist>("/robot/cmd_vel", 1);
 
@@ -12,6 +14,8 @@ Driver::Driver(ros::NodeHandle* nh)
 
 void Driver::DriveRobot()
 {
+    ROS_INFO("Driving Robot");
+    
     if (this->rightMostSensor < .5)
     {
         this->movementMsg.angular.z = .5;
@@ -37,10 +41,14 @@ void Driver::DriveRobot()
         this->movementMsg.angular.z = .5;
         this->movementMsg.linear.x = 0;
     }
+
+    this->_movementPublisher.publish(this->movementMsg);
 }
 
 void Driver::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
+    ROS_INFO("In Laser Scan Callback");
+
     if (this->numberOfLasers == 0)
     {
         try

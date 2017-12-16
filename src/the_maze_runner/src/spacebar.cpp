@@ -1,4 +1,5 @@
 #include "ros/ros.h"
+#include "the_maze_runner/input.h"
 #include <termios.h>
 
 // This code taken from ROS ANSWERS
@@ -24,7 +25,7 @@ int main(int argc, char ** argv)
 
     ros::Rate loop_rate(10);
 
-    ros::Publisher spacePublisher = nh.advertise<the_maze_runner::input>("spacePressed", 1);
+    ros::Publisher spacePublisher = nh.advertise<the_maze_runner::input>("space_input", 1);
 
     while (ros::ok())
     {
@@ -32,9 +33,10 @@ int main(int argc, char ** argv)
         if (c == ' ')
         {
             ROS_INFO("Space Bar Pressed");
-            the_maze_runner::input spacePressed.spacePressed = true;
+            the_maze_runner::input pressed;
+            pressed.spacePressed = true;
 
-            spacePublisher.publish(spacePressed);
+            spacePublisher.publish(pressed);
         }
     }
 }

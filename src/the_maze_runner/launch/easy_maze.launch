@@ -1,5 +1,7 @@
 <launch>
 
+    <node name="rviz" pkg="rviz" type="rviz" required="false" />
+
     <node name="stage" pkg="stage_ros" type="stageros" required="true" ns="robot"
         args="$(find the_maze_runner)/mazes/easy_maze.world" />
 
