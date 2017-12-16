@@ -1,33 +1,16 @@
 #include "../include/the_maze_runner/driver.hpp"
 #include <iostream>
 
-Driver::Driver(ros::NodeHandle *nh)
+Driver::Driver(ros::NodeHandle* nh)
 {
-    this->_nodeHandle = *nh;
-    this->_laserSubscriber = this->_nodeHandle.subscribe("/robot/base_scan", 1, &Driver::LaserScanCallback, this);
-    this->_movementPublisher = this->_nodeHandle.advertise<geometry_msgs::Twist>("/robot/cmd_vel", 1);
-    
+    this->_laserSubscriber = nh->subscribe("/robot/base_scan", 1, &Driver::LaserScanCallback, this);
+    this->_movementPublisher = nh->advertise<geometry_msgs::Twist>("/robot/cmd_vel", 1);
+
     this->numberOfLasers = 0;
-    this->mazeSolved = false;
     this->laserLimit = 1.5;
 }
 
-void Driver::DriveRobot(double newAngular, double newLinear)
-{
-    if (!this->mazeSolved)
-    {
-        this->RightWallFollow();
-    }
-    else
-    {
-        this->movementMsg.angular.z = newAngular;
-        this->movementMsg.linear.x = newLinear;
-    }
-
-    this->_movementPublisher.publish(this->movementMsg);
-}
-
-void Driver::RightWallFollow()
+void Driver::DriveRobot()
 {
     if (this->rightMostSensor < .5)
     {
@@ -54,11 +37,6 @@ void Driver::RightWallFollow()
         this->movementMsg.angular.z = .5;
         this->movementMsg.linear.x = 0;
     }
-}
-
-void Driver::FollowPath()
-{
-
 }
 
 void Driver::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)

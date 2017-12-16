@@ -30,92 +30,64 @@ void MazeMap::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 
 void MazeMap::UpdateMapWithRobotPosition()
 {
-    if (this->initializeCount < 1)
-    {
+    if (this->initializeCount < 2)
+    {   
         return;
     }
 
-    try
+    if (!this->mapComplete)
     {
-        this-> _tfListener.lookupTransform("/map", "/base_link", ros::Time(0), this->transform);
-    }
-    catch (tf::TransformException &ex)
-    {
-        ROS_INFO("Transform Exception caught. Not calculated robots position in map.");
-        return;
-    }
-
-    int x = 
-        (this->transform.getOrigin().x() - this->slamMap.info.origin.position.x) / this->slamMap.info.resolution;
-    
-    int y = 
-        (this->transform.getOrigin().y() - this->slamMap.info.origin.position.y) / this->slamMap.info.resolution;
-
-    if (this->uninitialized)
-    {
-
-        this->x_start = x;
-        this->y_start = y;
-        
-        this->uninitialized = false;
-    }
-
-    for (int i = 9; i > 0; --i)
-    {
-        this->previousTenRobotLocations[i] = this->previousTenRobotLocations[i - 1];
-    }
-
-    std::vector<int> newPoint;
-    newPoint.push_back(y);
-    newPoint.push_back(x);
-    this->previousTenRobotLocations[0] = newPoint;
-
-    for (int i = 0; i < 10; ++i)
-    {
-        int foundX = this->previousTenRobotLocations[i][0];
-        int foundY = this->previousTenRobotLocations[i][1];
-
-        this->slamMap.data[foundX * this->slamMap.info.width + foundY] = -127;
-    }
-
-    for (int i = -5; i < 5; ++i)
-    {
-        this->slamMap.data[(this->x_start) * this->slamMap.info.width + (this->y_start + i)] = -50;
-        this->slamMap.data[(this->x_start + i) * this->slamMap.info.width + (this->y_start - i)] = -50;
-        this->slamMap.data[(this->x_start + i) * this->slamMap.info.width + (this->y_start)] = -50;
-        this->slamMap.data[(this->x_start + i) * this->slamMap.info.width + (this->y_start + i)] = -50;
-    }
-
-    if (this->mapComplete)
-    {
-        for (int i = -5; i < 5; ++i)
+        try
         {
-            this->slamMap.data[(this->x_end) * this->slamMap.info.width + (this->y_end + i)] = -50;
-            this->slamMap.data[(this->x_end + i) * this->slamMap.info.width + (this->y_end - i)] = -50;
-            this->slamMap.data[(this->x_end + i) * this->slamMap.info.width + (this->y_end)] = -50;
-            this->slamMap.data[(this->x_end + i) * this->slamMap.info.width + (this->y_end + i)] = -50;
+            this->_tfListener.lookupTransform("/map", "/base_link", ros::Time(0), this->transform);
+        }
+        catch (tf::TransformException &ex)
+        {
+            ROS_INFO("Transform Exception caught. Not calculated robots position in map.");
+            return;
+        }
+
+        int x = 
+            (this->transform.getOrigin().x() - this->slamMap.info.origin.position.x) / this->slamMap.info.resolution;
+    
+        int y = 
+            (this->transform.getOrigin().y() - this->slamMap.info.origin.position.y) / this->slamMap.info.resolution;
+
+        if (this->uninitialized)
+        {
+            this->startX = x;
+            this->startY = y;
+
+            this->uninitialized = false;
+        }
+
+        for (int i = 9; i > 0; --i)
+        {
+            this->previousTenRobotLocations[i] = this->previousTenRobotLocations[i - 1];
+        }
+
+        std::vector<int> newPoint;
+        newPoint.push_back(y);
+        newPoint.push_back(x);
+        this->previousTenRobotLocations[0] = newPoint;
+
+        for (int i = 0; i < 10; ++i)
+        {
+            int foundX = this->previousTenRobotLocations[i][0];
+            int foundY = this->previousTenRobotLocations[i][1];
+
+            this->slamMap.data[foundX * this->slamMap.info.width + foundY] = -127;
         }
     }
 
+    // Visually Publishes the Origin of the Map in a Orange Cross
+    for (int i = -5; i < 5; ++i)
+    {
+        this->slamMap.data[(this->startX) * this->slamMap.info.width + (this->startY + i)] = -50;
+        this->slamMap.data[(this->startX + i) * this->slamMap.info.width + (this->startY - i)] = -50;
+        this->slamMap.data[(this->startX + i) * this->slamMap.info.width + (this->startY)] = -50;
+        this->slamMap.data[(this->startX + i) * this->slamMap.info.width + (this->startY + i)] = -50;
+    }
+    
     this->_mapPublisher.publish(this->slamMap);
-}
-
-double MazeMap::GetNextAngularMovement()
-{
-    //if (this->_pathFollower.IsFollowingPath)
-    //{
-        //return this->_pathFollower.CalculateNextAngularMovement();
-    //}
-
-    return 0;
-}
-
-double MazeMap::GetNextLinearMovement()
-{
-    //if (this->_pathFollower.IsFollowingPath)
-    //{
-        //return this->_pathFollower.CalculateNextLinearMovement();
-    //}
-
-    return 0;
 }

@@ -19,8 +19,6 @@ include_directories(
 add_executable(maze_runner src/main.cpp
                            src/driver.cpp
                            src/map.cpp
-                           src/path.cpp
-                           src/bot.cpp
                            src/follower.cpp)
 
 target_link_libraries(maze_runner ${catkin_LIBRARIES})
