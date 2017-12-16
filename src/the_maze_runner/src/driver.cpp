@@ -7,6 +7,7 @@ Driver::Driver(ros::NodeHandle* nh)
 
     this->_laserSubscriber = nh->subscribe("/robot/base_scan", 1, &Driver::LaserScanCallback, this);
     this->_movementPublisher = nh->advertise<geometry_msgs::Twist>("/robot/cmd_vel", 1);
+    this->_movementSubscriber = nh->subscribe("/cmd_vel", 1, &Driver::TwistCallback, this);
 
     this->numberOfLasers = 0;
     this->laserLimit = 1.5;
@@ -64,4 +65,9 @@ void Driver::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 
     this->rightMostSensor = msg->ranges[0];
     this->middleSensor = msg->ranges[(this->numberOfLasers / 2) - 1];
+}
+
+void Driver::TwistCallback(const geometry_msgs::Twist::ConstPtr& msg)
+{
+    this->_movementPublisher.publish(*msg);
 }

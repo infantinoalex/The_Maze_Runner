@@ -7,15 +7,14 @@
 
 #include "ros/ros.h"
 #include "the_maze_runner/input.h"
+#include "the_maze_runner/goal.h"
 #include "../include/the_maze_runner/driver.hpp"
 #include "../include/the_maze_runner/map.hpp"
 #include "../include/the_maze_runner/follower.hpp"
 
 bool spacePressed;
-
 void SpacebarCallback(const the_maze_runner::input::ConstPtr& msg)
 {
-    ROS_INFO("In Space Callback");
     spacePressed = msg->spacePressed;
 }
 
@@ -29,9 +28,10 @@ int main(int argc, char ** argv)
 
     // Custom instantiations
     ros::Subscriber spaceBarSub = nh.subscribe("space_input", 1, SpacebarCallback);
+    ros::Publisher goalPub = nh.advertise<the_maze_runner::goal>("my_goal", 1);
 
-    MazeMap map(&nh);
     Follower follower(&nh);
+    MazeMap map(&nh);
     Driver driver(&nh);
     
     // Main ROS driver
@@ -59,7 +59,12 @@ int main(int argc, char ** argv)
             }
             else
             {
-                follower.SolveMazeAndFollow();
+                //follower.SolveMazeAndFollow();
+                the_maze_runner::goal myGoal;
+                myGoal.x = map.GetStartX();
+                myGoal.y = map.GetStartY();
+                myGoal.ready = true;
+                goalPub.publish(myGoal);
             }
         }
 

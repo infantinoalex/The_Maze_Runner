@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
+  goal.msg
   input.msg
 )
 
@@ -33,8 +34,11 @@ add_executable(maze_runner src/main.cpp
                            src/follower.cpp)
 
 add_executable(key_listener src/spacebar.cpp)
+add_executable(goal_listener src/goal.cpp)
 
 target_link_libraries(maze_runner ${catkin_LIBRARIES})
 target_link_libraries(key_listener ${catkin_LIBRARIES})
-add_dependencies(maze_runner ${catkin_LIBRARIES})
-add_dependencies(key_listener ${catkin_LIBRARIES})
+target_link_libraries(goal_listener ${catkin_LIBRARIES})
+add_dependencies(maze_runner the_maze_runner_generate_messages_cpp ${catkin_LIBRARIES})
+add_dependencies(key_listener the_maze_runner_generate_messages_cpp ${catkin_LIBRARIES})
+add_dependencies(goal_listener the_maze_runner_generate_messages_cpp ${catkin_LIBRARIES})

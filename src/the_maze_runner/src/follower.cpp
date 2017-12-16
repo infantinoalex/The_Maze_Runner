@@ -14,16 +14,18 @@ void Follower::SetMazeStartCoordinates(float xCoordinate, float yCoordinate)
 
 void Follower::SolveMazeAndFollow()
 {
-    if (this->hasPublishedGoal)
-    {
-        return;
-    }
+    //if (this->hasPublishedGoal)
+    //{
+        //return;
+    //}
 
     geometry_msgs::PoseStamped moveGoal;
 
     moveGoal.pose.position.x = this->mazeStartX;
     moveGoal.pose.position.y = this->mazeStartY;
     moveGoal.pose.orientation.w = 1.0;
+    moveGoal.header.frame_id = "/map";
+    moveGoal.header.stamp = ros::Time();
 
     this->_navigationPublisher.publish(moveGoal);
 

@@ -30,12 +30,14 @@ void MazeMap::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 
 float MazeMap::GetStartX()
 {
+    //return this->startX;
     return (this->startX * this->slamMap.info.resolution) + this->slamMap.info.origin.position.x;
 }
 
 float MazeMap::GetStartY()
 {
-    return (this->startX * this->slamMap.info.resolution) + this->slamMap.info.origin.position.x;
+    //return this->startY;
+    return (this->startY * this->slamMap.info.resolution) + this->slamMap.info.origin.position.y;
 }
 
 void MazeMap::UpdateMapWithRobotPosition()

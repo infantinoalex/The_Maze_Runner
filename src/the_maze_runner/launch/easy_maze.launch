@@ -18,7 +18,13 @@
               _angularUpdate=0.05
               _linearUpdate=0.1" />
 
-    <node name="move_base" pkg="move_base" type="move_base" required="false" />
+    <node name="move_base" pkg="move_base" type="move_base" required="false" >
+        <rosparam file="$(find the_maze_runner)/launch/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find the_maze_runner)/launch/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find the_maze_runner)/launch/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find the_maze_runner)/launch/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find the_maze_runner)/launch/base_local_planner_params.yaml" command="load" />
+    </node>
 
     <node name="maze_runner" pkg="the_maze_runner" type="maze_runner"/>
 
