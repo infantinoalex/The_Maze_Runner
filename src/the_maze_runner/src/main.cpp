@@ -53,10 +53,9 @@ int main(int argc, char ** argv)
         {
             if (!map.mapComplete)
             {
-            
                 driver.DriveRobot();
 
-                follower.SetMazeStartCoordinates(map.startX, map.startY);
+                follower.SetMazeStartCoordinates(map.GetStartX(), map.GetStartY());
             }
             else
             {

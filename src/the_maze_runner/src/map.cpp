@@ -28,6 +28,16 @@ void MazeMap::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg)
     this->slamMap = *msg;
 }
 
+float MazeMap::GetStartX()
+{
+    return (this->startX * this->slamMap.info.resolution) + this->slamMap.info.origin.position.x;
+}
+
+float MazeMap::GetStartY()
+{
+    return (this->startX * this->slamMap.info.resolution) + this->slamMap.info.origin.position.x;
+}
+
 void MazeMap::UpdateMapWithRobotPosition()
 {
     if (this->initializeCount < 1)
@@ -90,4 +100,4 @@ void MazeMap::UpdateMapWithRobotPosition()
     }
     
     this->_mapPublisher.publish(this->slamMap);
-
+}

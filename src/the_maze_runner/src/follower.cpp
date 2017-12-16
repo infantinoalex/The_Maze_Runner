@@ -6,20 +6,10 @@ Follower::Follower(ros::NodeHandle *nh)
     this->hasPublishedGoal = false;
 }
 
-void Follower::SetMazeStartCoordinates(int xCoordinate, int yCoordinate)
+void Follower::SetMazeStartCoordinates(float xCoordinate, float yCoordinate)
 {
     this->mazeStartX = xCoordinate;
     this->mazeStartY = yCoordinate;
-}
-
-int Follower::GetMazeStartX()
-{
-    return this->mazeStartX;
-}
-
-int Follower::GetMazeStartY()
-{
-    return this->mazeStartY;
 }
 
 void Follower::SolveMazeAndFollow()
@@ -33,6 +23,7 @@ void Follower::SolveMazeAndFollow()
 
     moveGoal.pose.position.x = this->mazeStartX;
     moveGoal.pose.position.y = this->mazeStartY;
+    moveGoal.pose.orientation.w = 1.0;
 
     this->_navigationPublisher.publish(moveGoal);
 
