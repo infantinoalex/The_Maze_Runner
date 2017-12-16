@@ -16,8 +16,7 @@
               _angularUpdate=0.05
               _linearUpdate=0.1" />
 
-    <node name="move_base" pkg="move_base" type="move_base" required="false"
-        args="max_planning_retries:=10" />
+    <node name="move_base" pkg="move_base" type="move_base" required="false" />
 
     <node name="maze_runner" pkg="the_maze_runner" type="maze_runner"/>
 

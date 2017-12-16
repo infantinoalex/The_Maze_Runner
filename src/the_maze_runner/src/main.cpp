@@ -6,25 +6,17 @@
  ****/
 
 #include "ros/ros.h"
-#include <termios.h>
+#include "the_maze_runner/input.h"
 #include "../include/the_maze_runner/driver.hpp"
 #include "../include/the_maze_runner/map.hpp"
 #include "../include/the_maze_runner/follower.hpp"
 
-// Non blocking input from stdin
-int getch()
+void SpacebarCallback(const the_maze_runner::input::ConstPtr& msg)
 {
-    static struct termios oldt, newt;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
-    int c = getchar();
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    return c;
+    isSpacePressed = msg->spacePressed;
 }
+
+the_maze_runner::input isSpacePressed;
 
 int main(int argc, char ** argv)
 {
@@ -35,6 +27,8 @@ int main(int argc, char ** argv)
     ros::Rate loop_rate(10);
 
     // Custom instantiations
+    ros::Subscriber spaceBarSub = nh.subscribe("space_input", 1, SpacebarCallback);
+
     MazeMap map(&nh);
     Follower follower(&nh);
     Driver driver(&nh);
@@ -46,9 +40,7 @@ int main(int argc, char ** argv)
     {
         ros::spinOnce();
 
-        int c = getch();
-
-        if (c == ' ')
+        if (false)
         {
             ROS_INFO("Read Space Input");
 
@@ -61,18 +53,24 @@ int main(int argc, char ** argv)
 
         map.UpdateMapWithRobotPosition();
 
-        if (!map.mapComplete)
+        if (!map.uninitialized)
         {
-            driver.DriveRobot();
-
-            if (!map.uninitialized)
+            if (!map.mapComplete)
             {
+                ROS_INFO("Right Wall Follow");
+                driver.DriveRobot();
+
                 follower.SetMazeStartCoordinates(map.startX, map.startY);
+            }
+            else
+            {
+                ROS_INFO("Following Path");
+                follower.SolveMazeAndFollow();
             }
         }
         else
         {
-            follower.SolveMazeAndFollow();
+            ROS_INFO("Map Uninitialized");
         }
 
         loop_rate.sleep();

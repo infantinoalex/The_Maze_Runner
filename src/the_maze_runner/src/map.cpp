@@ -30,7 +30,7 @@ void MazeMap::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 
 void MazeMap::UpdateMapWithRobotPosition()
 {
-    if (this->initializeCount < 2)
+    if (this->initializeCount < 1)
     {   
         return;
     }
