@@ -30,14 +30,12 @@ void MazeMap::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 
 float MazeMap::GetStartX()
 {
-    //return this->startX;
-    return (this->startX * this->slamMap.info.resolution) + this->slamMap.info.origin.position.x;
+    return this->startX;
 }
 
 float MazeMap::GetStartY()
 {
-    //return this->startY;
-    return (this->startY * this->slamMap.info.resolution) + this->slamMap.info.origin.position.y;
+    return this->startY;
 }
 
 void MazeMap::UpdateMapWithRobotPosition()
@@ -51,6 +49,7 @@ void MazeMap::UpdateMapWithRobotPosition()
     {
         try
         {
+            // Used to get the position of the robot in the map
             this->_tfListener.lookupTransform("/map", "/base_link", ros::Time(0), this->transform);
         }
         catch (tf::TransformException &ex)
@@ -59,20 +58,24 @@ void MazeMap::UpdateMapWithRobotPosition()
             return;
         }
 
+        // Gets the x value of the index of the array
         int x = 
             (this->transform.getOrigin().x() - this->slamMap.info.origin.position.x) / this->slamMap.info.resolution;
     
+        // Gets the y value of the index of the array
         int y = 
             (this->transform.getOrigin().y() - this->slamMap.info.origin.position.y) / this->slamMap.info.resolution;
 
+        // Sets the origin of the robot in the map
         if (this->uninitialized)
         {
-            this->startX = x;
-            this->startY = y;
+            this->startX = this->transform.getOrigin().x() - this->slamMap.info.origin.position.x;
+            this->startY = this->transform.getOrigin().y() - this->slamMap.info.origin.position.y;
 
             this->uninitialized = false;
         }
 
+        // Used to print the last 10 locations of the robot in the map
         for (int i = 9; i > 0; --i)
         {
             this->previousTenRobotLocations[i] = this->previousTenRobotLocations[i - 1];

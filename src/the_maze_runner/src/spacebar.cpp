@@ -2,7 +2,9 @@
 #include "the_maze_runner/input.h"
 #include <termios.h>
 
-// This code taken from ROS ANSWERS
+// This code taken from ROS ANSWERS. It uses a non-blocking loop to constantly
+// listen for input from the user and publish it to a custom topic. It is waiting to hear if 
+// the spacebar is pressed
 int getch()
 {
     static struct termios oldt, newt;

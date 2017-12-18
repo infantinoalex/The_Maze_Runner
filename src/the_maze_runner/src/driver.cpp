@@ -1,6 +1,12 @@
 #include "../include/the_maze_runner/driver.hpp"
 #include <iostream>
 
+// Constructor
+//      Initialized:
+//          LaserScan subscriber
+//          Movement publisher
+//          Movement subscriber
+//              redirects anything publish to /cmd_vel -> /robot/cmd_vel
 Driver::Driver(ros::NodeHandle* nh)
 {
     ROS_INFO("Initialized Driver");
@@ -13,10 +19,10 @@ Driver::Driver(ros::NodeHandle* nh)
     this->laserLimit = 1.5;
 }
 
+// Drives the robot around the map using a right wall following algorithm
 void Driver::DriveRobot()
 {
-    ROS_INFO("Driving Robot");
-    
+    // Ensures that the robot does not hit the wall
     if (this->rightMostSensor < .5)
     {
         this->movementMsg.angular.z = .5;
@@ -46,6 +52,7 @@ void Driver::DriveRobot()
     this->_movementPublisher.publish(this->movementMsg);
 }
 
+// Updates the LaserScan values when it receives laser data
 void Driver::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
     ROS_INFO("In Laser Scan Callback");
@@ -67,6 +74,7 @@ void Driver::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
     this->middleSensor = msg->ranges[(this->numberOfLasers / 2) - 1];
 }
 
+// Gets the cmd_vel data to republish
 void Driver::TwistCallback(const geometry_msgs::Twist::ConstPtr& msg)
 {
     this->_movementPublisher.publish(*msg);
