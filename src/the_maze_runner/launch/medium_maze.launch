@@ -12,11 +12,7 @@
               _map_update_interval:=3.0
               _maxUrange:=5.0
               _maxRange:=5.0
-              _particles=100.0
-              _minimumScore=50
-              _stt=0.9
-              _angularUpdate=0.05
-              _linearUpdate=0.1" />
+              _minimumScore=100" />
 
     <node name="move_base" pkg="move_base" type="move_base" required="false" >
         <rosparam file="$(find the_maze_runner)/launch/costmap_common_params.yaml" command="load" ns="global_costmap" />
