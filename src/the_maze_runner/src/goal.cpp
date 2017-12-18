@@ -45,6 +45,7 @@ int main(int argc, char ** argv)
         ROS_INFO("Waiting for the move_base action server to come up");
     }
 
+
     move_base_msgs::MoveBaseGoal new_goal;
 
     new_goal.target_pose.header.frame_id = "/map";
@@ -54,8 +55,14 @@ int main(int argc, char ** argv)
     new_goal.target_pose.pose.position.y = goal.y;
 
     new_goal.target_pose.pose.orientation.w = 1.0;
+    
+    do
+    {  
+        ROS_INFO("Sending Goal");
+        ac.sendGoal(new_goal);
 
-    ac.sendGoal(new_goal);
+        ac.waitForResult();
+    } while (ac.getState() != actionlib::SimpleClientGoalState::SUCCEEDED);
 
-    ac.waitForResult();
+    ROS_INFO("Reached Goal");
 }

@@ -3,8 +3,8 @@ include "common.inc"
 
 floorplan
 ( 
-  name "easy_maze"
-  bitmap "easy_maze.png"
+  name "medium_maze"
+  bitmap "medium_maze.png"
   size [55.000 30.000 1.000]
 )
 

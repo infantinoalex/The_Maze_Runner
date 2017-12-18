@@ -69,8 +69,10 @@ void MazeMap::UpdateMapWithRobotPosition()
         // Sets the origin of the robot in the map
         if (this->uninitialized)
         {
-            this->startX = this->transform.getOrigin().x() - this->slamMap.info.origin.position.x;
-            this->startY = this->transform.getOrigin().y() - this->slamMap.info.origin.position.y;
+            this->startXInArray = x;
+            this->startYInArray = y;
+            this->startX = this->transform.getOrigin().x() * this->slamMap.info.resolution;
+            this->startY = this->transform.getOrigin().y() - this->slamMap.info.resolution;
 
             this->uninitialized = false;
         }
@@ -98,10 +100,10 @@ void MazeMap::UpdateMapWithRobotPosition()
     // Visually Publishes the Origin of the Map in a Orange Cross
     for (int i = -5; i < 5; ++i)
     {
-        this->slamMap.data[(this->startX) * this->slamMap.info.width + (this->startY + i)] = -50;
-        this->slamMap.data[(this->startX + i) * this->slamMap.info.width + (this->startY - i)] = -50;
-        this->slamMap.data[(this->startX + i) * this->slamMap.info.width + (this->startY)] = -50;
-        this->slamMap.data[(this->startX + i) * this->slamMap.info.width + (this->startY + i)] = -50;
+        this->slamMap.data[(this->startXInArray) * this->slamMap.info.width + (this->startYInArray + i)] = -50;
+        this->slamMap.data[(this->startXInArray + i) * this->slamMap.info.width + (this->startYInArray - i)] = -50;
+        this->slamMap.data[(this->startXInArray + i) * this->slamMap.info.width + (this->startYInArray)] = -50;
+        this->slamMap.data[(this->startXInArray + i) * this->slamMap.info.width + (this->startYInArray + i)] = -50;
     }
     
     this->_mapPublisher.publish(this->slamMap);
